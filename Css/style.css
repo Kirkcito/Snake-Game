@@ -1,0 +1,72 @@
+.main-section
+{
+    min-height: 100vh;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+}
+
+body
+{
+    margin: 0;
+    padding: 0;
+    background-color: #9BC700;
+    font-family: 'Press Start 2P',monospace;
+}
+
+header
+{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: #9BBF7A;
+
+}
+
+.Separador
+{
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 98%;
+    align-self: center;
+}
+
+.Separador hr
+{
+    width: 100%;
+    border: none;
+    border-top: 2px solid black;
+    margin: 0;
+}
+
+.Playground
+{
+    display: grid;
+    justify-content: center;
+    align-self: center;
+    
+    min-height: 80vh;
+    width: 98%;
+    border: 2px solid black;
+
+    grid-template: repeat(30, 1fr)/repeat(30, 1fr);
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+
+
+footer
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #9BBF7A;
+}
+
+.snake
+{
+    background-color: black;
+}
