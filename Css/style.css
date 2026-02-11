@@ -41,6 +41,13 @@ header
     margin: 0;
 }
 
+:root
+{
+    --cell-size: 20px;
+    --num-cols:30;
+    --num-rows:10;
+}
+
 .Playground
 {
     display: grid;
@@ -51,7 +58,8 @@ header
     width: 98%;
     border: 2px solid black;
 
-    grid-template: repeat(30, 1fr)/repeat(30, 1fr);
+    grid-template-columns: repeat(var(--num-cols), var(--cell-size));
+    grid-template-rows: repeat(var(--num-rows), var(--cell-size));
     margin-top: 30px;
     margin-bottom: 30px;
 }
@@ -69,4 +77,9 @@ footer
 .snake
 {
     background-color: black;
+}
+
+.apple
+{
+    background-color: red;
 }
