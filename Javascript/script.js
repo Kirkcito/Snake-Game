@@ -22,7 +22,7 @@ function updateScore()
 }
 
 //Cada celda del juego tendra un tamaño de 30px
-let cellSize =  30; //px 
+let cellSize =  40; //px 
 document.documentElement.style.setProperty('--cell-size', cellSize+'px');
 
 const widthPx = screen.clientWidth;
@@ -70,6 +70,7 @@ function incrementSnakeLenght()
     const tail = snake[snake.length - 1];
     snake.push({x: tail.x, y: tail.y});
 }
+
 
 function reseatGame()
 {
@@ -188,7 +189,7 @@ function moveSnake()
 
 }
 
-function checkCollision()
+function checkBorderColision()
 {
     //Obtenemos la cabeza de la serpiente
     const head = snake[0];
@@ -201,6 +202,26 @@ function checkCollision()
         decreaseLives();
     }
 
+}
+
+function checkSelfColision()
+{
+    //Verificamos si la cabeza colisiona con su propio cuerpo.
+    const head = snake[0];
+
+
+    //Empezamos desde el segundo segmento (índice 1) para comparar la cabeza con el resto del cuerpo de la serpiente.
+    for(let i = 1; i < snake.length; i++)
+    {
+        //Si la posicion actual de la cabeza coincide con la posición de cualquier segmento del cuerpo, se reinicia la posición y se disminuye una vida.
+        if(head.x === snake[i].x && head.y === snake[i].y)
+        {
+            resetPosition();
+            decreaseLives();
+            return; //Salimos de la función para evitar seguir verificando colisiones después de haber detectado una.
+        }
+    }
+        
 }
 
 function decreaseLives()
@@ -219,13 +240,18 @@ function decreaseLives()
 
 function gameLoop()
 {
-    updateLifes()
+    updateLifes();
     updateScore();
-    createApples()
-    checkCollision();
+    createApples();
+
     moveSnake();
+
+    checkBorderColision();
+    checkSelfColision();
+    
     draw();
 }
 
 //Llamamos a la función gameLoop cada 100 milisegundos para actualizar el estado del juego y redibujar la serpiente en su nueva posición.
 setInterval(gameLoop, 100);
+
