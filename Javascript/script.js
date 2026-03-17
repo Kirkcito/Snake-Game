@@ -1,5 +1,5 @@
 /*
-document es un objeto global que representa el documento HTML cargado en el navegador.
+Document es un objeto global que representa el documento HTML cargado en el navegador.
 Nos permite acceder y manipular el contenido de la página web.
 */
 
@@ -36,8 +36,28 @@ let centerY = Math.floor(rows/2);
 
 let Currentdirection = 'right'; //Dirección inicial de la serpiente
 
+let gameInterval = null; //Variable para almacenar el intervalo del juego
+
+function startGame()
+{
+    gameInterval = setInterval(gameLoop, 100); //Iniciamos el bucle del juego llamando a gameLoop cada 100 milisegundos
+}
+
+function stopGame()
+{
+    clearInterval(gameInterval); //Detenemos el bucle del juego
+    gameInterval = null; //Reiniciamos la variable del intervalo
+}
+
 //Se le da la posicion
-let snake = [{x : centerX , y : centerY }];
+let snake = [
+    {x : centerX , y : centerY },
+    {x : centerX+1 , y : centerY+1 },
+    {x : centerX+2 , y : centerY+2}    
+];
+
+let ScaleImageX = 1;
+let SnakeRot = '0deg';
 
 //Ajustamos las columnas y filas en las variables CSS para que el grid se adapte al tamaño de la pantalla
 document.documentElement.style.setProperty('--num-cols', cols);
@@ -45,6 +65,10 @@ document.documentElement.style.setProperty('--num-rows', rows);
 
 //Creamos la manzana en una posición aleatoria dentro del área de juego, asegurándonos de que no aparezca en la posición inicial de la serpiente.
 let apple = [{x: Math.floor(Math.random()*cols)+1, y: Math.floor(Math.random()*rows)+1}];
+
+const DeathScreen = document.querySelector('.Death-Screen');
+const RestartButton = document.querySelector('#Restart-Button');
+const QuitButton = document.querySelector('#Quit-Button');
 
 //Creamos Manzanas al azar.
 function createApples()
@@ -83,7 +107,12 @@ function reseatGame()
 
 function resetPosition()
 {
-    snake = [{x : centerX, y :centerY}];
+    snake = [
+        {x : centerX , y : centerY},
+        {x : centerX+1 , y : centerY+1},
+        {x : centerX+2 , y : centerY+2}];
+    ScaleImageX = 1;
+    SnakeRot = '0deg';
     Currentdirection = 'right';
 }
 
@@ -93,6 +122,7 @@ function draw()
     screen.innerHTML = '';
     drawSnake();
     drawApple();
+    ChangeDirectionImage()
 }
 
 function drawApple()
@@ -107,13 +137,29 @@ function drawApple()
 
 function drawSnake()
 {
+    let className;
     //Dibujar cada segmento de la serpiente en la pantalla
-    snake.forEach((segment) => {
-        const snakeElement = createGameElement('div','snake');
+    snake.forEach((segment, index) => {
+        //El primer indice de la serpiente es la cabeza por lo que se le asigna una clase diferente
+        if(index === 0)
+        {
+            className = 'snake-head';
+        }
+        else if(index === snake.length - 1)
+        {
+            className = 'snake-tail';
+        }
+        else 
+        {
+            className = 'snake-body';
+        }
+        
+        const snakeElement = createGameElement('div', className); 
         SetPosition(snakeElement,segment);
         screen.appendChild(snakeElement);
     });
 }
+
 
 function createGameElement(tag, className)
 {
@@ -138,21 +184,37 @@ document.addEventListener('keydown', (event) => {
     //Dependiendo de la tecla presionada, asignamos una dirección de movimiento a la serpiente
     switch(key)
     {
-        case 'ArrowUp':
-        if(Currentdirection !== 'down')    
-            Currentdirection = 'up';
+        case 'w': case 'W': case 'ArrowUp':
+        if(Currentdirection !== 'down')
+            {
+                Currentdirection = 'up';
+                ScaleImageX = 1;
+                SnakeRot = '-90deg';
+            }
             break;
-        case 'ArrowDown':
+        case 's': case 'S': case 'ArrowDown':
         if(Currentdirection !== 'up')
-            Currentdirection = 'down';
+            {
+                Currentdirection = 'down';
+                ScaleImageX = 1;
+                SnakeRot = '-90deg';
+            }
             break;
-        case 'ArrowLeft':
+        case 'a': case 'A': case 'ArrowLeft':
         if(Currentdirection !== 'right')
-            Currentdirection = 'left';
+            {
+                Currentdirection = 'left';
+                ScaleImageX = -1;
+                SnakeRot = '0deg';
+            }
             break;
-        case 'ArrowRight':
+        case 'd': case 'D': case 'ArrowRight':
         if(Currentdirection !== 'left')
-            Currentdirection = 'right';
+            {
+                Currentdirection = 'right';
+                ScaleImageX = 1;
+                SnakeRot = '0deg';
+            }
             break;
     }
 }); 
@@ -184,9 +246,8 @@ function moveSnake()
     //unshift agrega la nueva cabeza al inicio del array de la serpiente, lo que hace que la serpiente se mueva en la dirección deseada.
     snake.unshift(newHead); 
 
-    //como solo queremos dar la ilusion de movimiento, por ahora, eliminamos la ultima dirección de la serpiente para que no crezca indefinidamente.
+    //Como solo queremos dar la ilusion de movimiento, por ahora, eliminamos la ultima dirección de la serpiente para que no crezca indefinidamente.
     snake.pop();
-
 }
 
 function checkBorderColision()
@@ -201,7 +262,6 @@ function checkBorderColision()
         resetPosition();
         decreaseLives();
     }
-
 }
 
 function checkSelfColision()
@@ -220,9 +280,24 @@ function checkSelfColision()
             decreaseLives();
             return; //Salimos de la función para evitar seguir verificando colisiones después de haber detectado una.
         }
-    }
-        
+    }  
 }
+
+function showDeathScreen()
+{
+    stopGame(); //Detenemos el juego al mostrar la pantalla de muerte
+    resetPosition();
+    DeathScreen.style.display = 'flex';
+    RestartButton.addEventListener('click', () => {
+        reseatGame(); 
+        DeathScreen.style.display = 'none';
+        startGame();
+    });
+    QuitButton.addEventListener('click', () => {
+        window.close();
+    });
+}
+
 
 function decreaseLives()
 {
@@ -231,11 +306,16 @@ function decreaseLives()
     updateLifes();
     if(lifes <= 0)
     {
-        updateLifes();
-        //Reiniciamos el juego y agregar pantalla de perdida
-        reseatGame()
-        alert("Game Over!");
+        showDeathScreen()
     }
+}
+
+
+function ChangeDirectionImage()
+{
+    //Ajustamos el factor de escala para las imágenes dependiendo de la dirección del movimiento de la serpiente
+    document.documentElement.style.setProperty('--Snake--ScaleFactorX', ScaleImageX);
+    document.documentElement.style.setProperty('--Snake--Rot', SnakeRot);
 }
 
 function gameLoop()
@@ -252,6 +332,5 @@ function gameLoop()
     draw();
 }
 
-//Llamamos a la función gameLoop cada 100 milisegundos para actualizar el estado del juego y redibujar la serpiente en su nueva posición.
-setInterval(gameLoop, 100);
+startGame();
 

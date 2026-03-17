@@ -46,6 +46,8 @@ header
     --cell-size: 20px;
     --num-cols:30;
     --num-rows:10;
+    --Snake--ScaleFactorX : 1;
+    --Snake--Rot : 0deg;
 }
 
 .Playground
@@ -74,12 +76,70 @@ footer
     background-color: #9BBF7A;
 }
 
-.snake
+
+.snake-head
 {
-    background-color: black;
+    width: var(--cell-size);
+    height: var(--cell-size);
+    background-image: url(../assets/Cabeza_Serpiente.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    transform: rotate(var(--Snake--Rot)) scaleX(var(--Snake--ScaleFactorX));
+}
+
+.snake-body
+{
+    width: var(--cell-size);
+    height: var(--cell-size);
+    background-image: url(../assets/Cuerpo_Serpiente.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    transform: rotate(var(--Snake--Rot)) scaleX(var(--Snake--ScaleFactorX));
+}
+
+.snake-tail
+{
+    width: var(--cell-size);
+    height: var(--cell-size);
+    background-image: url(../assets/Cola_Serpiente.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    transform: rotate(var(--Snake--Rot)) scaleX(var(--Snake--ScaleFactorX));
 }
 
 .apple
 {
-    background-color: red;
+    width: var(--cell-size);
+    height: var(--cell-size);
+    background-image: url(../assets/Manzana.png);
+    background-size: cover;
+    background-repeat: no-repeat ;
+}
+
+.Death-Screen
+{
+    background-color: black;
+    border: solid white 2px;
+    display: none;        
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    height: 50%;
+    
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+}
+
+#Death-Image
+{
+    border: solid white 2px;
+    width: 50%;
+    height: auto;
+    margin-bottom: 20px;
 }
